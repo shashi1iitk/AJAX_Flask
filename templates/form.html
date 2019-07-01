@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+	
+	<script type="text/javascript">
+	
+	$(document).ready(function() {
+
+
+		$('#framework').multiselect({
+			  nonSelectedText: 'Select Framework',
+			  enableFiltering: true,
+			  enableCaseInsensitiveFiltering: true,
+			  buttonWidth:'400px'
+			 });
+
+	$('form').on('submit', function(event) {
+
+		var brands = $('#framework option:selected');
+        var selected = [];
+        $(brands).each(function(index, brand){
+            selected.push([$(this).val()]);
+        });
+
+        console.log(selected);
+       
+        selected_string = selected.toString();
+
+         alert(selected_string);
+
+		$.ajax({
+			data : {
+			 	// blood_group : $("input:radio[name=blood_group] :selected").val(),
+			 	blood_group : $("input[name='blood_group']:checked").val(),
+			 	// country : $('#select-country').find('option:selected').val(),
+			 	country : $('#select-country option:selected').val(),
+			 	
+				name : $('#nameInput').val(),
+				// multiselect : selected,
+				email : $('#emailInput').val(),
+				
+				selected_sports: selected_string
+			},
+
+			// data: $('#registerForm').serialize(),
+			type : 'POST',
+			url : '/process'
+		})
+		.done(function(data) {
+
+			if (data.error) {
+				$('#errorAlert').text(data.error).show();
+				$('#successAlert').hide();
+			}
+			else {
+				$('#successAlert').text(data.name).show();
+				$('#errorAlert').hide();
+			}
+
+
+
+
+
+
+		{
+	    $('#framework option:selected').each(function(){
+	     $(this).prop('selected', false);
+	    });
+	    $('#framework').multiselect('refresh');
+	   }
+
+		});
+
+		event.preventDefault();
+
+		
+
+	});
+
+});
+	
+	
+	</script>
+</head>
+<body>
+
+<div class="container">
+	<br><br><br><br>
+	
+	
+	<form class="form-inline" id="registerForm">
+	
+				
+    	 <div class="control-group">
+
+             <div class="form-group floating-label-form-group controls">
+                <label>Blood Group: </label>
+				<div class="form-check form-check-inline">
+
+                  <label><input class="form-check-input" type="radio" name="blood_group" value="A+">A+</label>
+
+                   <label><input class="form-check-input" type="radio" name="blood_group" value="B+">B+</label>
+               </div>
+            </div>
+
+        </div>
+
+	
+	
+	  <div class="form-group">
+	    <label class="sr-only" for="emailInput">Email address</label>
+	    <input type="email" class="form-control" id="emailInput" placeholder="Email"  required data-validation-required-message="Please enter your email.">
+	  </div>
+	  
+	  <div class="form-group">
+	    <label class="sr-only" for="nameInput">Name</label>
+	    <input type="text" class="form-control" id="nameInput" name="names" placeholder="First Name">
+	  </div>
+
+	  <div class="control-group">
+           <div class="form-group floating-label-form-group controls">
+         <!-- <select class="form-control selectpicker" id="select-country" data-live-search="true"> -->
+         	<label>Select Country:</label>
+		        <select class="form-control selectpicker" id="select-country" data-live-search="true">
+			    	<option selected >Selet your college</option>
+			        <option value="United States">United States</option>
+			        <option value="India">India</option>
+			        <option value="United Kingdom">United Kingdom</option>
+		        </select>
+          </div>
+        </div>
+
+
+ <!-- 		<label>Select Country:</label>
+        <select class="country">
+            <option value="usa">United States</option>
+            <option value="india">India</option>
+            <option value="uk">United Kingdom</option>
+        </select> -->
+
+
+
+    <div class="form-group">
+	     <label>Select which Framework you have knowledge</label>
+		     <select id="framework" name="framework[]" multiple class="form-control" >
+			      <option value="Codeigniter">Codeigniter</option>
+			      <option value="CakePHP">CakePHP</option>
+			      <option value="Laravel">Laravel</option>
+			      <option value="YII">YII</option>
+			      <option value="Zend">Zend</option>
+			      <option value="Symfony">Symfony</option>
+			      <option value="Phalcon">Phalcon</option>
+			      <option value="Slim">Slim</option>
+		     </select>
+    </div>
+	  
+	  <button type="submit" class="btn btn-default">Submit</button>
+	  
+	</form>
+	<br>
+	<div id="successAlert" class="alert alert-success" role="alert" style="display:none;"></div>
+	<div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
+</div>
+</body>
+</html>
+
+
+
+
+{% endblock %}
